@@ -1,0 +1,14 @@
+{
+  "ASHRAE_like_summer": {
+    "coord_type": "db_rh",
+    "x": [23, 26, 26, 23],
+    "y": [40, 40, 60, 60],
+    "style": { "fill_opacity": 0.12, "line_width": 1.5 }
+  },
+  "Target_24C_50RH": {
+    "coord_type": "db_rh",
+    "x": [24, 25, 25, 24],
+    "y": [45, 45, 55, 55],
+    "style": { "fill_opacity": 0.18, "line_width": 2.0 }
+  }
+}
