@@ -56,7 +56,7 @@ def run_app() -> None:
     GUIで選択→描画→SVG出力まで一気通貫。
     """
     # 選択GUI（あなたの gui.py を少し拡張して後述のGUISelectionを返す想定）
-    from .gui2 import popup_select2  # 新規GUI（後述）
+    from .gui_app import popup_select2  # 新規GUI（後述）
 
     state = load_state()
     sel = popup_select2(state)
@@ -68,12 +68,13 @@ def run_app() -> None:
     state.last_selected_zones = sel.selected_zones or []
     save_state(state)
 
-    # zones読み込み（任意）
+    #zones読み込み（任意）
     zones = None
     if sel.zones_config:
         zones = load_zones_config(sel.zones_config)
 
     df, meta = load_epw(sel.epw_path)
+    
 
     # 月別
     if sel.mode in ("Monthly", "Both"):
