@@ -1,0 +1,5 @@
+numpy
+pandas
+plotly
+kaleido
+shimeri@ git+https://github.com/yutaka-shoji/shimeri.git
