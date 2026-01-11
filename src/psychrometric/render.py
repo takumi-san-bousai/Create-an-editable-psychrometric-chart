@@ -9,7 +9,7 @@ import pandas as pd
 from shimeri import PsychrometricCalculator, PsychrometricChart
 from .svg_post import postprocess_svg
 
-from .add import ZoneSpec, add_zone_polygon
+from .enhance_chart import ZoneSpec, add_zone_polygon
 
 
 def _pressure_kpa(df: pd.DataFrame, fallback_kpa: float = 101.325) -> float:

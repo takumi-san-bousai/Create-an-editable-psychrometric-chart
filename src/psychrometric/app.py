@@ -10,11 +10,11 @@ import tempfile
 from pathlib import Path
 
 try:
-    # when run as a package: python -m psychrimetric.app
+    # when run as a package: python -m psychrometric.app
     from .epw_io import load_epw
     from .render import render_density_svg
 except Exception:
-    # when run as a script: python src/psychrimetric/app.py
+    # when run as a script: python src/psychrometric/app.py
     try:
         from psychrometric.epw_io import load_epw
         from psychrometric.render import render_density_svg
@@ -28,25 +28,74 @@ def main(page: ft.Page):
     status = ft.Text("Ready")
     page.add(ft.Text("Hello — psychrometric Flet app."))
 
-    # File picker (append to overlay so it can show dialog)
-    def _on_pick(e: ft.FilePickerResultEvent):
-        if not e.files:
+    # Use native tkinter file dialog for desktop builds (FilePicker may be unsupported)
+    try:
+        import tkinter as _tk
+        from tkinter import filedialog as _filedialog
+    except Exception:
+        _tk = None
+        _filedialog = None
+
+    def _on_click(e: ft.Event):
+        status.value = "Opening file picker..."
+        page.update()
+
+        if _filedialog is None:
+            status.value = "tkinter not available: cannot open file dialog."
+            page.update()
+            return
+
+        try:
+            root = _tk.Tk()
+            root.withdraw()
+            epw_path = _filedialog.askopenfilename(
+                title="Select EPW file",
+                filetypes=[("EPW files", "*.epw"), ("All files", "*.*")],
+            )
+            root.destroy()
+        except Exception as ex:
+            status.value = f"File dialog error: {ex}"
+            page.update()
+            return
+
+        if not epw_path:
             status.value = "No file selected."
             page.update()
             return
 
-        epw_path = e.files[0].path
         status.value = f"Loading {Path(epw_path).name}..."
         page.update()
 
         try:
             df, meta = load_epw(epw_path)
+
+            # Ask user where to save the generated SVG (native dialog)
+            save_path = None
+            if _filedialog is not None:
+                try:
+                    root2 = _tk.Tk()
+                    root2.withdraw()
+                    suggested = Path(epw_path).stem + ".svg"
+                    save_path = _filedialog.asksaveasfilename(
+                        title="Save SVG as",
+                        defaultextension=".svg",
+                        initialfile=suggested,
+                        filetypes=[("SVG files", "*.svg"), ("All files", "*.*")],
+                    )
+                    root2.destroy()
+                except Exception:
+                    save_path = None
+
             ts = int(time.time())
-            out_svg = Path(tempfile.gettempdir()) / f"psych_{ts}.svg"
+            if save_path:
+                out_svg = Path(save_path)
+                out_svg.parent.mkdir(parents=True, exist_ok=True)
+            else:
+                out_svg = Path(tempfile.gettempdir()) / f"psych_{ts}.svg"
+
             render_density_svg(df, out_svg, title=meta.location or "EPW chart")
             status.value = f"Rendered: {out_svg} (opening)"
             page.update()
-            # Open with default system viewer (Windows)
             try:
                 os.startfile(out_svg)
             except Exception:
@@ -56,13 +105,10 @@ def main(page: ft.Page):
             status.value = f"Error: {ex}"
             page.update()
 
-    file_picker = ft.FilePicker(on_result=_on_pick)
-    page.overlay.append(file_picker)
-
-    btn = ft.ElevatedButton("Make_graph!", on_click=lambda e: file_picker.pick_files())
+    btn = ft.Button("Make_graph!", on_click=_on_click)
     page.add(btn)
     page.add(status)
 
 
 if __name__ == "__main__":
-    ft.app(target=main)
+    ft.run(main)

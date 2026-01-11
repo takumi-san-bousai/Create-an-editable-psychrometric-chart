@@ -1,4 +1,4 @@
-# src/psychrimetric/epw_io.py
+# src/psychrometric/epw_io.py
 from __future__ import annotations
 
 from dataclasses import dataclass

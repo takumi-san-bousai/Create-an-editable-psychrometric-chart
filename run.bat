@@ -24,7 +24,7 @@ pip install -e .
 
 REM 4) run app (GUI)
 set PYTHONPATH=%CD%\src
-python -m psychrimetric.app
+python -m psychrometric.app
 
 pause
 endlocal

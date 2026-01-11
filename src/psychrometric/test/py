@@ -1,0 +1,5 @@
+import flet as ft
+
+file_picker = ft.FilePicker()
+page.overlay.append(file_picker)
+page.update()
