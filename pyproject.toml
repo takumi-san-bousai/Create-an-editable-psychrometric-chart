@@ -11,6 +11,7 @@ dependencies = [
   "numpy",
   "pandas",
   "plotly",
+  "flet",
   "kaleido",
   "shimeri @ git+https://github.com/yutaka-shoji/shimeri.git"
 ]

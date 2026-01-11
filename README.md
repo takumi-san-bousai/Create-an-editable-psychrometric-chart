@@ -1,12 +1,10 @@
 # Create-an-editable-psychrometric-chart
-環境建築のプレゼンボードに利用可能なSVGデータを作成するためのコードです
+プレゼンボードに利用可能な空気線図のSVGデータを作成するためのコードです
 
 仕様書
 1. 目的・スコープ
 1.1 目的
-
-EPW気象データから、外気状態点（乾球温度・湿度）をサイコロメトリックチャート上に表現し、**月別（12枚）および季節別（複数枚）**の 密度ベース（2Dヒストグラム等高線）プロットを生成する。
-
+EPW気象データから、外気状態点（乾球温度・湿度）をサイコロメトリックチャート上に表現し、プロットを生成する。
 出力は **プレゼンボードに貼り込めるベクタ形式（SVG）**とする。
 
 1.2 依存ライブラリ（前提）
@@ -75,13 +73,13 @@ shimeri.PsychrometricChart 上に **2Dヒストグラム等高線（密度）**�
 
 季節定義（デフォルト）：
 
-Winter = Dec, Jan, Feb（DJF）
+Winter = Dec, Jan, Feb
 
-Spring = Mar, Apr, May（MAM）
+Spring = Mar, Apr, May
 
-Summer = Jun, Jul, Aug（JJA）
+Summer = Jun, Jul, Aug
 
-Autumn = Sep, Oct, Nov（SON）
+Autumn = Sep, Oct, Nov
 
 CLIまたは設定ファイルで任意の月セットを定義できるようにする（例：夏季運転=7–9、冬季運転=12–3 など）。
 

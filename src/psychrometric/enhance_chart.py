@@ -13,7 +13,6 @@ CoordType = Literal["db_rh", "db_hr"]
 class ZoneSpec:
     """
     ゾーン（快適域など）のポリゴン頂点定義。
-
     coord_type:
       - "db_rh": x=乾球温度[°C], y=相対湿度[%]
       - "db_hr": x=乾球温度[°C], y=絶対湿度[g/kg]

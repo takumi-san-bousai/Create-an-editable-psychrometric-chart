@@ -14,7 +14,6 @@ from .render import render_density_svg
 from .gui import popup_select
 
 
-
 DEFAULT_SEASONS = {"Winter": [12, 1, 2], "Spring": [3, 4, 5], "Summer": [6, 7, 8], "Autumn": [9, 10, 11]} #北半球に寄せてるけどもまあいいかといいう感じ
 
 
@@ -45,7 +44,6 @@ def main():
         out = sel.out_dir / f"{meta.location}_Yearly.svg"
         render_density_svg(df, out, f"{meta.location} / Yearly (N={len(df)})")
     
-
 
 if __name__ == "__main__":
     # スクリプトとして直接実行された場合、親ディレクトリ(src)をパスに追加して
