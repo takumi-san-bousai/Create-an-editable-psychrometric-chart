@@ -1,0 +1,5 @@
+'".venv\Scripts\activate.bat"' は、内部コマンドまたは外部コマンド、
+操作可能なプログラムまたはバッチ ファイルとして認識されていません。
+Requirement already satisfied: pip in c:\users\ttoyo\appdata\local\python\pythoncore-3.14-64\lib\site-packages (25.3)
+'pip' は、内部コマンドまたは外部コマンド、
+操作可能なプログラムまたはバッチ ファイルとして認識されていません。

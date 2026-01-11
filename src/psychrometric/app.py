@@ -13,13 +13,22 @@ try:
     # when run as a package: python -m psychrometric.app
     from .epw_io import load_epw
     from .render import render_density_svg
+    from .period_filter import split_by_month, split_by_seasons
 except Exception:
     # when run as a script: python src/psychrometric/app.py
     try:
         from psychrometric.epw_io import load_epw
         from psychrometric.render import render_density_svg
+        from psychrometric.period_filter import split_by_month, split_by_seasons
     except Exception:
         raise
+
+DEFAULT_SEASONS = {
+    "Winter": [12, 1, 2],
+    "Spring": [3, 4, 5],
+    "Summer": [6, 7, 8],
+    "Autumn": [9, 10, 11],
+}
 
 
 def main(page: ft.Page):
@@ -69,37 +78,43 @@ def main(page: ft.Page):
         try:
             df, meta = load_epw(epw_path)
 
-            # Ask user where to save the generated SVG (native dialog)
-            save_path = None
+            # Ask user where to save the generated SVGs (native dialog)
+            out_dir = None
             if _filedialog is not None:
                 try:
                     root2 = _tk.Tk()
                     root2.withdraw()
-                    suggested = Path(epw_path).stem + ".svg"
-                    save_path = _filedialog.asksaveasfilename(
-                        title="Save SVG as",
-                        defaultextension=".svg",
-                        initialfile=suggested,
-                        filetypes=[("SVG files", "*.svg"), ("All files", "*.*")],
-                    )
+                    out_dir = _filedialog.askdirectory(title="Select Output Directory")
                     root2.destroy()
                 except Exception:
-                    save_path = None
+                    out_dir = None
 
-            ts = int(time.time())
-            if save_path:
-                out_svg = Path(save_path)
-                out_svg.parent.mkdir(parents=True, exist_ok=True)
-            else:
-                out_svg = Path(tempfile.gettempdir()) / f"psych_{ts}.svg"
+            if not out_dir:
+                out_dir = tempfile.gettempdir()
 
-            render_density_svg(df, out_svg, title=meta.location or "EPW chart")
-            status.value = f"Rendered: {out_svg} (opening)"
+            out_path = Path(out_dir)
+            out_path.mkdir(parents=True, exist_ok=True)
+            loc_name = meta.location or "EPW"
+
+            # 1. Yearly
+            render_density_svg(df, out_path / f"{loc_name}_Yearly.svg", title=f"{loc_name} / Yearly")
+
+            # 2. Seasonal
+            for name, d in split_by_seasons(df, DEFAULT_SEASONS).items():
+                if not d.empty:
+                    render_density_svg(d, out_path / f"{loc_name}_{name}.svg", title=f"{loc_name} / {name}")
+
+            # 3. Monthly
+            for m, d in split_by_month(df).items():
+                if not d.empty:
+                    render_density_svg(d, out_path / f"{loc_name}_M{m:02d}.svg", title=f"{loc_name} / Month {m:02d}")
+
+            status.value = f"Rendered all charts in: {out_path}"
             page.update()
             try:
-                os.startfile(out_svg)
+                os.startfile(out_path)
             except Exception:
-                status.value = f"Rendered: {out_svg} (open manually)"
+                status.value = f"Rendered in {out_path} (open manually)"
                 page.update()
         except Exception as ex:
             status.value = f"Error: {ex}"
